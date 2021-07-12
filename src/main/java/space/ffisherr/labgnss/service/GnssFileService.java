@@ -4,8 +4,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import space.ffisherr.labgnss.model.GnssFileModel;
 
+import java.io.File;
+import java.util.List;
+
 public interface GnssFileService {
 
     Page<GnssFileModel> readAll(Pageable pageable);
+
+    List<String> readAllPath();
+
+    Boolean loadFile(File file);
 
 }
