@@ -6,9 +6,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Data
-@Entity(name = "gnss_file")
+@Entity
+@Table(name = "gnss_file")
 public class GnssFileEntity {
 
     @Id
