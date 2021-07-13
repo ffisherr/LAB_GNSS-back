@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Component
@@ -33,12 +34,16 @@ public class GnssFileScanner {
         }
         log.debug("Base directory {} exists", baseDirPath);
         final List<String> loadedFiles = service.readAllPath();
-        final File[] files = baseDir.listFiles(filter);
-        if (files == null) {
-            log.warn("No file found for scanning");
-            return;
+        scanFilesInDir(baseDir, loadedFiles);
+    }
+
+    private void scanFilesInDir(File dir, List<String> loadedFiles) {
+        for (File file : Objects.requireNonNull(dir.listFiles())) {
+            if (file.isDirectory()) {
+                scanFilesInDir(file, loadedFiles);
+            }
         }
-        for (File file : files) {
+        for (File file : Objects.requireNonNull(dir.listFiles(filter))) {
             final String absolutePath = file.getAbsolutePath();
             log.debug("File found for scanning: {}", absolutePath);
             if (loadedFiles.contains(absolutePath)) {

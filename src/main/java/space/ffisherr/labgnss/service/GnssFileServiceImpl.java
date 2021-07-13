@@ -53,11 +53,15 @@ public class GnssFileServiceImpl implements GnssFileService {
             log.error("Error while reading file", e);
         }
         final Boolean isFileValid = validateFile(readFile, FilenameUtils.getExtension(file.getName()));
+        if (!isFileValid) {
+            log.warn("File {} is invalid", file);
+            return false;
+        }
         return true;
     }
 
     private Boolean validateFile(String text, String extension) {
-        Boolean valid = false;
+        boolean valid = false;
         if (text == null || text.isEmpty()) {
             log.warn("File is empty");
             valid = false;
