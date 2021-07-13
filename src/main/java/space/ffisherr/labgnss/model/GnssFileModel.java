@@ -8,5 +8,8 @@ public class GnssFileModel {
     private Long id;
     private String name;
     private Boolean isValid;
+    private String year;
+    private String month;
+    private String day;
 
 }

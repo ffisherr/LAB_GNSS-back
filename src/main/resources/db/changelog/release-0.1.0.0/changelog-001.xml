@@ -9,8 +9,15 @@
 
     <changeSet id="GNSS-0: create tables" author="gnss">
         <sql>
-            drop table if exists gnss_file;
-            create table gnss_file (id int primary key, name text, path text, is_valid boolean);
+            create table if not exists gnss_file (
+            id BIGINT PRIMARY KEY AUTO_INCREMENT,
+            name text,
+            path text,
+            is_valid boolean,
+            year text,
+            month text,
+            day text
+            );
         </sql>
     </changeSet>
 

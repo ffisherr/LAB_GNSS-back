@@ -1,4 +1,18 @@
-GET http://localhost:8080/api/files/
+###GET http://localhost:8080/api/files/
+###Accept: application/json
+
+###
+GET http://localhost:8080/api/files/years/
 Accept: application/json
 
 ###
+GET http://localhost:8080/api/files/2017/months/
+Accept: application/json
+
+###
+GET http://localhost:8080/api/files/2017/10/days/
+Accept: application/json
+
+###
+GET http://localhost:8080/api/files/2017/10/19/
+Accept: application/json

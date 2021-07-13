@@ -24,7 +24,7 @@ public class GnssFileScanner {
     @Value("${gnss.files.scanner.base-dir}")
     private String baseDirPath;
 
-    @Scheduled(fixedRateString = "${gnss.files.scanner.schedule.rate:5000}")
+    @Scheduled(fixedRateString = "${gnss.files.scanner.schedule.rate:500000}")
     public void execute() {
         log.info("Executing files scanning");
         final File baseDir = new File(baseDirPath);
@@ -35,6 +35,7 @@ public class GnssFileScanner {
         log.debug("Base directory {} exists", baseDirPath);
         final List<String> loadedFiles = service.readAllPath();
         scanFilesInDir(baseDir, loadedFiles);
+        log.info("Finished loading files");
     }
 
     private void scanFilesInDir(File dir, List<String> loadedFiles) {

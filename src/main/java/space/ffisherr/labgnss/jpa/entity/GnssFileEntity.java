@@ -19,5 +19,8 @@ public class GnssFileEntity {
     private String name;
     private String path;
     private Boolean isValid;
+    private String year;
+    private String month;
+    private String day;
 
 }

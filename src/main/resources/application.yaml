@@ -16,4 +16,4 @@ gnss:
   files:
     scanner:
       schedule:
-        rate: 10000
+        rate: 1000000

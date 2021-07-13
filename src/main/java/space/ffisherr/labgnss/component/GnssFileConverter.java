@@ -12,6 +12,9 @@ public class GnssFileConverter {
         model.setId(entity.getId());
         model.setIsValid(entity.getIsValid());
         model.setName(entity.getName());
+        model.setYear(entity.getYear());
+        model.setMonth(entity.getMonth());
+        model.setDay(entity.getDay());
         return model;
     }
 

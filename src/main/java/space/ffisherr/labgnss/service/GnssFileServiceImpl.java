@@ -26,12 +26,52 @@ import java.util.stream.Collectors;
 public class GnssFileServiceImpl implements GnssFileService {
 
     private static final List<Integer> AVAILABLE_PAR_NUMBERS = Arrays.asList(25, 27, 33);
+    private static final Long MAP_FILE_SIZE = 32L;
     private final GnssFileRepository repository;
     private final GnssFileConverter converter;
 
     @Override
     public Page<GnssFileModel> readAll(Pageable pageable) {
         return repository.findAll(pageable).map(converter::convertFromEntity);
+    }
+
+    @Override
+    public List<GnssFileModel> readAllYears() {
+        return repository.readAllYears()
+                .stream().map(v -> {
+                    final GnssFileModel model = new GnssFileModel();
+                    model.setYear(v);
+                    return model;
+                }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GnssFileModel> readAllMonthByYear(String year) {
+        return repository.readAllMonthByYear(year)
+                .stream().map(v -> {
+                    final GnssFileModel model = new GnssFileModel();
+                    model.setYear(year);
+                    model.setMonth(v);
+                    return model;
+                }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GnssFileModel> readAllMonthByYearAndMonth(String year, String month) {
+        return repository.readAllDaysByMonthAndYear(year, month)
+                .stream().map(v -> {
+                    final GnssFileModel model = new GnssFileModel();
+                    model.setYear(year);
+                    model.setMonth(month);
+                    model.setDay(v);
+                    return model;
+                }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GnssFileModel> readAllByParticularDay(String year, String month, String day) {
+        return repository.readAllByDay(year, month, day)
+                .stream().map(converter::convertFromEntity).collect(Collectors.toList());
     }
 
     @Override
@@ -46,13 +86,16 @@ public class GnssFileServiceImpl implements GnssFileService {
             return false;
         }
         log.debug("Service loads file {}", file.getAbsolutePath());
-        String readFile = "";
-        try {
-            readFile = FileUtils.readFileToString(file, "UTF-8");
-        } catch (IOException e) {
-            log.error("Error while reading file", e);
-        }
-        final Boolean isFileValid = validateFile(readFile, FilenameUtils.getExtension(file.getName()));
+        final Boolean isFileValid = validateFile(file);
+        final String[] date = file.getName().split("-");
+        final GnssFileEntity entity = new GnssFileEntity();
+        entity.setIsValid(true);
+        entity.setName(file.getName());
+        entity.setPath(file.getAbsolutePath());
+        entity.setYear(date[0]);
+        entity.setMonth(date[1]);
+        entity.setDay(date[2]);
+        repository.save(entity);
         if (!isFileValid) {
             log.warn("File {} is invalid", file);
             return false;
@@ -60,8 +103,15 @@ public class GnssFileServiceImpl implements GnssFileService {
         return true;
     }
 
-    private Boolean validateFile(String text, String extension) {
+    private Boolean validateFile(File file) {
+        final String extension = FilenameUtils.getExtension(file.getName());
         boolean valid = false;
+        String text = "";
+        try {
+            text = FileUtils.readFileToString(file, "UTF-8");
+        } catch (IOException e) {
+            log.error("Error while reading file", e);
+        }
         if (text == null || text.isEmpty()) {
             log.warn("File is empty");
             valid = false;
@@ -71,6 +121,13 @@ public class GnssFileServiceImpl implements GnssFileService {
                 valid =  true;
             } else {
                 log.warn("Broken PAR file");
+            }
+        } else if ("map".equals(extension)) {
+            final long size = FileUtils.sizeOf(file);
+            if (size % MAP_FILE_SIZE == 0) {
+                valid = true;
+            } else {
+                log.warn("Broken MAP file");
             }
         }
         return valid;
