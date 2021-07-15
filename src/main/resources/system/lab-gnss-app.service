@@ -1,0 +1,14 @@
+[Unit]
+Description=Lab-Gnss server application service
+After=syslog.target network.target
+[Service]
+SuccessExitStatus=143
+
+
+Type=forking
+
+ExecStart=/opt/lab-gnss/conf/wrapper.sh
+ExecStop=/bin/kill -155 $MAINPID
+
+[Install]
+WantedBy=multi-uesr.target
