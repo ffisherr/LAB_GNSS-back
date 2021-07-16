@@ -1,14 +1,15 @@
 [Unit]
 Description=Lab-Gnss server application service
-After=syslog.target network.target
+After=syslog.target
+
 [Service]
+ExecStart=/usr/lib/jvm/java-11-openjdk-amd64/bin/java -jar /opt/lab-gnss/back/lab-gnss-0.0.1-SNAPSHOT.jar --spring.config.location=/opt/lab-gnss/back/application.properties
+StandardOutput=file:/var/log/lab-gnss/console-main.log
+StandardError=file:/var/log/lab-gnss/console-main.log
 SuccessExitStatus=143
-
-
-Type=forking
-
-ExecStart=/opt/lab-gnss/conf/wrapper.sh
-ExecStop=/bin/kill -155 $MAINPID
+TimeoutStopSec=10
+Restart=on-failure
+RetartSec=5
 
 [Install]
 WantedBy=multi-uesr.target
