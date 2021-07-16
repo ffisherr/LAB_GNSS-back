@@ -2,6 +2,7 @@ package space.ffisherr.labgnss.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import space.ffisherr.labgnss.model.GnssFileModel;
 import space.ffisherr.labgnss.service.GnssFileService;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 @Slf4j
@@ -49,6 +51,12 @@ public class GnssFileController {
     private List<GnssFileModel> readDay(@PathVariable String year, @PathVariable String month, @PathVariable String day) {
         log.info("Reading day by {} year {} month {} day", year, month, day);
         return service.readAllByParticularDay(year, month, day);
+    }
+
+    @GetMapping("/{fileId}/")
+    private InputStreamResource getFileById(@PathVariable Long fileId) throws FileNotFoundException {
+        log.info("Reading file by id: {}", fileId);
+        return new InputStreamResource(service.getFileById(fileId));
     }
 
 

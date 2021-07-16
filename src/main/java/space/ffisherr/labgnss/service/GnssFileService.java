@@ -5,6 +5,8 @@ import org.springframework.data.domain.Pageable;
 import space.ffisherr.labgnss.model.GnssFileModel;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.List;
 
 public interface GnssFileService {
@@ -23,4 +25,5 @@ public interface GnssFileService {
 
     Boolean loadFile(File file);
 
+    InputStream getFileById(Long fileId) throws FileNotFoundException;
 }

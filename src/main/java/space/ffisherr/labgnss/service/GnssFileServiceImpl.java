@@ -14,9 +14,13 @@ import space.ffisherr.labgnss.jpa.repository.GnssFileRepository;
 import space.ffisherr.labgnss.model.GnssFileModel;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -101,6 +105,20 @@ public class GnssFileServiceImpl implements GnssFileService {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public InputStream getFileById(Long fileId) throws FileNotFoundException {
+        final Optional<GnssFileEntity> optionalEntity = repository.findById(fileId);
+        final GnssFileEntity entity = optionalEntity
+                .orElseThrow(() -> new IllegalArgumentException("Nothing found for requested id"));
+        final String path = entity.getPath();
+        final File file = new File(path);
+        if (!file.exists()) {
+            log.error("Requested file is not exists!");
+            throw new IllegalArgumentException("Requested file does not exist");
+        }
+        return new FileInputStream(file);
     }
 
     private Boolean validateFile(File file) {
